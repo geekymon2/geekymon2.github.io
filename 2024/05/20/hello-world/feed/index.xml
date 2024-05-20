@@ -7,11 +7,11 @@
 	>
 <channel>
 	<title>
-	Comments on: Hello world!	</title>
-	<atom:link href="http://localhost/wordpress/2024/05/20/hello-world/feed/?simply_static_page=51" rel="self" type="application/rss+xml" />
+	Comments on: Aggregating Spring Doc Swagger Documentation	</title>
+	<atom:link href="http://localhost/wordpress/2024/05/20/hello-world/feed/?simply_static_page=125" rel="self" type="application/rss+xml" />
 	<link>/2024/05/20/hello-world/</link>
-	<description>I love to &#60;code&#62;</description>
-	<lastBuildDate>Mon, 20 May 2024 08:35:51 +0000</lastBuildDate>
+	<description>I love coding and learning the latest on upcoming technologies</description>
+	<lastBuildDate>Mon, 20 May 2024 09:47:12 +0000</lastBuildDate>
 	<sy:updatePeriod>
 	hourly	</sy:updatePeriod>
 	<sy:updateFrequency>

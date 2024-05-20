@@ -9,10 +9,10 @@
 
 <channel>
 	<title>Uncategorized &#8211; Hi, My name is @geekymon2</title>
-	<atom:link href="http://localhost/wordpress/category/uncategorized/feed/?simply_static_page=73" rel="self" type="application/rss+xml" />
+	<atom:link href="http://localhost/wordpress/category/uncategorized/feed/?simply_static_page=147" rel="self" type="application/rss+xml" />
 	<link></link>
-	<description>I love to &#60;code&#62;</description>
-	<lastBuildDate>Mon, 20 May 2024 08:35:51 +0000</lastBuildDate>
+	<description>I love coding and learning the latest on upcoming technologies</description>
+	<lastBuildDate>Mon, 20 May 2024 09:47:12 +0000</lastBuildDate>
 	<language>en-US</language>
 	<sy:updatePeriod>
 	hourly	</sy:updatePeriod>
@@ -20,7 +20,7 @@
 	1	</sy:updateFrequency>
 	<generator>https://wordpress.org/?v=6.5.3</generator>
 	<item>
-		<title>Hello world!</title>
+		<title>Aggregating Spring Doc Swagger Documentation</title>
 		<link>/2024/05/20/hello-world/</link>
 					<comments>/2024/05/20/hello-world/#comments</comments>
 		
@@ -29,9 +29,72 @@
 				<category><![CDATA[Uncategorized]]></category>
 		<guid isPermaLink="false">/?p=1</guid>
 
-					<description><![CDATA[Welcome to WordPress. This is your first post. Edit or delete it, then start writing!]]></description>
+					<description><![CDATA[In this post I am sharing an example of aggregating the swagger documentation from a various spring boot apps into a single swagger URL within spring cloud gateway. We first<p><a href="/2024/05/20/hello-world/" class="more-link">Continue reading<span class="screen-reader-text">Aggregating Spring Doc Swagger Documentation</span></a></p>]]></description>
 										<content:encoded><![CDATA[
-<p>Welcome to WordPress. This is your first post. Edit or delete it, then start writing!</p>
+<p>In this post I am sharing an example of aggregating the swagger documentation from a various spring boot apps into a single swagger URL within spring cloud gateway.</p>
+
+
+
+<p>We first start off by adding the required dependencies within the pom file.</p>
+
+
+
+<pre class="wp-block-code"><code>&lt;dependency&gt;
+	&lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+	&lt;artifactId&gt;springdoc-openapi-starter-webflux-api&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;org.springdoc&lt;/groupId&gt;
+	&lt;artifactId&gt;springdoc-openapi-starter-webflux-ui&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+
+
+
+<p>I then create a configuration class where i am using the spring cloud gateway routes definition to loop through the routes and add the swagger docs url into the definition GroupedOpenApi bean.</p>
+
+
+
+<pre class="wp-block-code"><code>@Configuration
+@Slf4j
+public class AppConfig {
+    private static final String API_URI = "/v3/api-docs";
+
+    private final RouteDefinitionLocator locator;
+
+    public AppConfig(RouteDefinitionLocator locator) {
+        this.locator = locator;
+    }
+
+    @Bean
+    public GroupedOpenApi apis(SwaggerUiConfigProperties swaggerUiConfigProperties) {
+
+        Set&lt;AbstractSwaggerUiConfigProperties.SwaggerUrl&gt; urls = new HashSet&lt;&gt;();
+        locator.getRouteDefinitions().subscribe(routeDefinition -&gt; {
+            log.info("Discovered route definition: {}", routeDefinition.getId());
+            String resourceName = routeDefinition.getId();
+            String location = routeDefinition.getPredicates().get(0).getArgs().get("_genkey_0").replace("/**", API_URI);
+            log.info("Adding swagger resource: {} with location {}", resourceName, location);
+            urls.add(new AbstractSwaggerUiConfigProperties.SwaggerUrl(resourceName, location, resourceName));
+        });
+        swaggerUiConfigProperties.setUrls(urls);
+        return GroupedOpenApi.builder()
+                .group("api-gateway")
+                .pathsToMatch("/api/**")
+                .build();
+    }
+}</code></pre>
+
+
+
+<p>Checkout the completed working example in github</p>
+
+
+
+<p>API gateway: <a href="https://github.com/geekymon2/carmarketplace-apigateway">https://github.com/geekymon2/carmarketplace-apigateway</a></p>
+
+
+
+<p>Config: <a href="https://github.com/geekymon2/carmarketplace-config/tree/main/api-gateway">https://github.com/geekymon2/carmarketplace-config/tree/main/api-gateway</a></p>
 ]]></content:encoded>
 					
 					<wfw:commentRss>/2024/05/20/hello-world/feed/</wfw:commentRss>
